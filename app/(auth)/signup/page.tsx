@@ -6,13 +6,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuthActions } from "@convex-dev/auth/react"
-import { Mail, Chrome } from "lucide-react"
+import { useMutation } from "convex/react"
+import { api } from "../../../convex/_generated/api"
+import { Mail, Phone, Chrome } from "lucide-react"
 import Link from "next/link"
 
 export default function SignupPage() {
     const { signIn } = useAuthActions()
+    const sendOTP = useMutation(api.twilio.sendOTP)
+    const verifyOTP = useMutation(api.twilio.verifyOTP)
+
+    const [step, setStep] = useState<"signIn" | "verify">("signIn")
     const [email, setEmail] = useState("")
+    const [phone, setPhone] = useState("")
+    const [code, setCode] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
 
     const handleGoogle = () => {
         setLoading(true)
@@ -22,10 +31,50 @@ export default function SignupPage() {
     const handleEmail = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
+        setError("")
         try {
             await signIn("resend", { email, redirectTo: "/chats" })
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
+            setError(error.message || "Failed to send email")
+            setLoading(false)
+        }
+    }
+
+    const handlePhone = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        setError("")
+        try {
+            await sendOTP({ phoneNumber: phone })
+            setStep("verify")
+        } catch (error: any) {
+            setError(error.message || "Failed to send SMS")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleVerifyPhone = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+        setError("")
+        try {
+            const result = await verifyOTP({ phoneNumber: phone, code })
+            if (result.success) {
+                // Create account with phone
+                await signIn("password", {
+                    id: phone,
+                    password: code,
+                    flow: "signUp"
+                })
+                window.location.href = "/chats"
+            } else {
+                setError(result.error || "Invalid code")
+            }
+        } catch (error: any) {
+            setError(error.message || "Verification failed")
+        } finally {
             setLoading(false)
         }
     }
@@ -39,9 +88,10 @@ export default function SignupPage() {
                 </div>
 
                 <Tabs defaultValue="google" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsList className="grid w-full grid-cols-3 mb-6">
                         <TabsTrigger value="google"><Chrome className="w-4 h-4 mr-2" /> Google</TabsTrigger>
                         <TabsTrigger value="email"><Mail className="w-4 h-4 mr-2" /> Email</TabsTrigger>
+                        <TabsTrigger value="phone"><Phone className="w-4 h-4 mr-2" /> Phone</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="google" className="space-y-4">
@@ -71,10 +121,65 @@ export default function SignupPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
+                            {error && <p className="text-sm text-destructive">{error}</p>}
                             <Button type="submit" className="w-full h-11" disabled={loading}>
                                 {loading ? "Sending Link..." : "Sign up with Email"}
                             </Button>
                         </form>
+                    </TabsContent>
+
+                    <TabsContent value="phone">
+                        {step === "signIn" ? (
+                            <form onSubmit={handlePhone} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">Phone Number</Label>
+                                    <Input
+                                        id="phone"
+                                        type="tel"
+                                        placeholder="+1 234 567 8900"
+                                        required
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                    />
+                                    <p className="text-xs text-muted-foreground">Include country code (e.g. +1)</p>
+                                </div>
+                                {error && <p className="text-sm text-destructive">{error}</p>}
+                                <Button type="submit" className="w-full h-11" disabled={loading}>
+                                    {loading ? "Sending Code..." : "Send OTP"}
+                                </Button>
+                            </form>
+                        ) : (
+                            <form onSubmit={handleVerifyPhone} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="code">Enter 6-Digit Code</Label>
+                                    <Input
+                                        id="code"
+                                        type="text"
+                                        placeholder="123456"
+                                        className="tracking-[0.5em] text-center text-xl"
+                                        maxLength={6}
+                                        required
+                                        value={code}
+                                        onChange={(e) => setCode(e.target.value)}
+                                    />
+                                    <p className="text-xs text-muted-foreground text-center">
+                                        Code sent to {phone}
+                                    </p>
+                                </div>
+                                {error && <p className="text-sm text-destructive">{error}</p>}
+                                <Button type="submit" className="w-full h-11" disabled={loading}>
+                                    {loading ? "Verifying..." : "Verify & Create Account"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="w-full"
+                                    onClick={() => setStep("signIn")}
+                                >
+                                    Change Number
+                                </Button>
+                            </form>
+                        )}
                     </TabsContent>
                 </Tabs>
 
