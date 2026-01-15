@@ -10,7 +10,8 @@ import pino from 'pino';
 import { Server } from 'socket.io';
 import { handleUpsert } from './handler';
 import { ConvexHttpClient } from "convex/browser";
-import { api } from "../whats-app-ai-assistant/convex/_generated/api.js";
+import { api } from "../convex/_generated/api.js";
+
 import dotenv from 'dotenv';
 
 dotenv.config();
