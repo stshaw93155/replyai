@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* WhatsApp Web Theme */
+  --background: #d1d7db; /* App background (gray) */
+  --foreground: #111b21;
+  
+  --card: #ffffff;
+  --card-foreground: #111b21;
+  
+  --popover: #ffffff;
+  --popover-foreground: #111b21;
+  
+  --primary: #008069; /* WhatsApp Teal */
+  --primary-foreground: #ffffff;
+  
+  --secondary: #f0f2f5; /* Light gray for headers/sidebars */
+  --secondary-foreground: #111b21;
+  
+  --muted: #f0f2f5;
+  --muted-foreground: #54656f;
+  
+  --accent: #f0f2f5;
+  --accent-foreground: #111b21;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  
+  --border: #e9edef;
+  --input: #f0f2f5;
+  --ring: #008069;
+  
+  --radius: 0rem; /* WhatsApp is mostly square or slightly rounded */
+
+  /* Chat specific */
+  --chat-background: #efeae2; /* Beige chat background */
+  --incoming-background: #ffffff;
+  --outgoing-background: #d9fdd3; /* Light green */
+  
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111b21;
+  --sidebar-primary: #008069;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f2f5;
+  --sidebar-accent-foreground: #111b21;
+  --sidebar-border: #e9edef;
+  --sidebar-ring: #008069;
+}
+
+.dark {
+  /* WhatsApp Dark Mode */
+  --background: #0c1317;
+  --foreground: #d1d7db;
+  
+  --card: #111b21; /* Sidebar/Headers */
+  --card-foreground: #d1d7db;
+  
+  --popover: #111b21;
+  --popover-foreground: #d1d7db;
+  
+  --primary: #00a884; /* Lighter teal for dark mode */
+  --primary-foreground: #111b21;
+  
+  --secondary: #202c33;
+  --secondary-foreground: #d1d7db;
+  
+  --muted: #202c33;
+  --muted-foreground: #8696a0;
+  
+  --accent: #2a3942;
+  --accent-foreground: #d1d7db;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  
+  --border: #222e35;
+  --input: #2a3942;
+  --ring: #00a884;
+
+  /* Chat specific */
+  --chat-background: #0b141a;
+  --incoming-background: #202c33;
+  --outgoing-background: #005c4b;
+  
+  --sidebar: #111b21;
+  --sidebar-foreground: #d1d7db;
+  --sidebar-primary: #00a884;
+  --sidebar-primary-foreground: #111b21;
+  --sidebar-accent: #2a3942;
+  --sidebar-accent-foreground: #d1d7db;
+  --sidebar-border: #222e35;
+  --sidebar-ring: #00a884;
+}
+
+@theme inline {
+  --font-sans: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif; /* WhatsApp font stack */
+  --font-mono: "Courier New", monospace;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --color-chat-background: var(--chat-background);
+  --color-incoming-background: var(--incoming-background);
+  --color-outgoing-background: var(--outgoing-background);
+  
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
